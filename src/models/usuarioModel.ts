@@ -1,4 +1,5 @@
-import pool from '../utils/connection';
+import { connection } from 'mongoose';
+import pool from '../config/connection';
 
 
 class UsuarioModelo {
@@ -12,6 +13,16 @@ class UsuarioModelo {
         return result;
     }
 
+    public async listByEmail(email: string){
+        const result = await pool.then(async(connection)=>{
+            return await connection.query(
+                "SELECT u.email, u.password, u.role "
+                +"FROM tbl_usuario u "
+                +"WHERE u.email=?",email
+            )
+        });
+        return result
+    }
 
     public async add(usuario: any) {
         const result = await pool.then( async (connection) => {
