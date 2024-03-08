@@ -9,7 +9,8 @@ class UsuarioController {
 
   public async list(req: Request, res: Response) {
     try {
-      return res.json({ message: "Listado de Usuario", code: 0 });
+        const users= await model.list()
+        return res.json({ message: "Listado de Usuario", code: 0 ,users});
     } catch (error: any) {
         return res.status(500).json({ message: `${error.message}` });
     }
@@ -19,9 +20,12 @@ class UsuarioController {
   public async add(req: Request, res: Response) {
     
     try {
-      var encryptedText= await utils.hashPassword(req.body)
 
-      const { email, password, role } = req.body;
+      var { email, password, role }=req.body;
+      var encryptedText= await utils.hashPassword(password);
+      password=encryptedText
+      console.log(password)
+      const user={ email, password, role };
       
 
       if (!validator.isEmail(email)) {
@@ -33,7 +37,7 @@ class UsuarioController {
         return res.status(400).json({ message: "Ya existe un usuario con ese email", code: 400 });
       }
 
-      await model.add({ email, password, role });
+      await model.add(user);
       return res.json({ message: "Agregar Usuario", code: 0 });
 
     } catch (error: any) {
@@ -44,7 +48,12 @@ class UsuarioController {
 
   public async update(req: Request, res: Response) {
     try {
-      const { email, password } = req.body;
+      var { email, password, role }=req.body;
+      var encryptedText= await utils.hashPassword(password);
+      password=encryptedText
+      console.log(password)
+      const user={ email, password, role };
+      
 
       // Verificar si el usuario existe
       const existingUser = await model.listByEmail(email);
@@ -53,7 +62,7 @@ class UsuarioController {
       }
 
       // Actualizar la contraseña del usuario
-      await model.update({ email, password });
+      await model.update(user);
 
       return res.json({ message: "Modificación de Usuario", code: 0 });
     } catch (error: any) {

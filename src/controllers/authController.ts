@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import validator from "validator";
 import model from "../models/authModels";
+import { utils } from "../utils/utils";
 
 class AuthController {
   /**
@@ -24,17 +25,17 @@ class AuthController {
       }
 
       const lstUsers = await model.getuserByEmail(email);
+      let result= utils.checkPassword(password,lstUsers[0].password)
       
-      if (lstUsers.length <= 0) {
-        return res
-          .status(404)
-          .json({
-            message: "El usuario y/o contraseña es incorrecto",
-            code: 1,
-          });
-      }
+      result.then((value)=>{
+        if(value){
+          return res.json({message: "Autenticacion correcta",})
+        }else{
+          return res.json({message:"Passwor Incorrecto", code:1})
+        }
+      })
 
-      return res.json({ message: "Autenticación correcta", code: 0 });
+      
     } catch (error: any) {
       return res.status(500).json({ message: `${error.message}` });
     }
