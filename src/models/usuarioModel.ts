@@ -1,4 +1,3 @@
-import { connection } from 'mongoose';
 import pool from '../config/connection';
 
 
@@ -9,7 +8,7 @@ class UsuarioModelo {
         const result = await pool.database.then( async (connection) => {
             return await connection.query(
                 " SELECT u.email, u.password, u.role "
-                + " FROM tbl_usuario u ")  });
+                + " FROM tbl_usuario u ") });
         return result;
     }
 
