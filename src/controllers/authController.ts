@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import validator from "validator";
 import model from "../models/authModels";
 import { utils } from "../utils/utils";
+import jwt from 'jsonwebtoken';
 
 class AuthController {
   /**
@@ -29,7 +30,17 @@ class AuthController {
       
       result.then((value)=>{
         if(value){
-          return res.json({message: "Autenticacion correcta",})
+          const newUser={
+            email:lstUsers[0].email,
+            password:lstUsers[0].password,
+            role:lstUsers[0].role
+          }
+
+          console.log(process.env.SECRET);
+          const env = require('dotenv').config();
+          let token=jwt.sign(newUser,process.env.SECRET,{expiresIn:'1h'});
+          console.log(lstUsers[0].username,lstUsers[0].password);
+          return res.json({message: "Autenticacion correcta",token,code:0})
         }else{
           return res.json({message:"Passwor Incorrecto", code:1})
         }

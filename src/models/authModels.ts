@@ -8,7 +8,7 @@ class AuthModelo {
     */
     public async getuserByEmail(email: string) {
 	    let query = "SELECT * FROM tbl_usuario WHERE email='" + email + "'"
-        const result = await pool.then(async (connection) => {
+        const result = await pool.database.then(async (connection) => {
             return await connection.query(query);
         });
         return result;
